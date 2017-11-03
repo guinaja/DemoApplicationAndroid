@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">DemoApplication</string>
+    <string name="page_main">สวัสดี !! แอพพลิเคชันตัวแรกนี้</string>
+    <string name="page_1_top_label">หน้าแรกของโปรแกรมนี้</string>
+    <string name="page_2_top_label">หน้าสองของโปรแกรมนี้</string>
+
+    <string name="btn_page_1">หน้า 1</string>
+    <string name="btn_page_2">หน้า 2</string>
+    <string name="btn_next_page">หน้าถัดไป</string>
+    <string name="btn_main_page">กลับหน้าหลัก</string>
+
+    <string name="email_hint">กรุณาใส่ e-mail ของคุณ</string>
+    <string name="email_invalid">อีเมลที่ไม่ถูกต้อง</string>
+    <string name="email_require">กรุณาใส่ e-mail ของคุณ</string>
+    <string name="loading">กำลังโหลด . . .</string>
+</resources>
+
