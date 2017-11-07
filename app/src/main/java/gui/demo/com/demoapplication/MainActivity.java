@@ -1,6 +1,11 @@
 package gui.demo.com.demoapplication;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,62 +13,47 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.android.volley.Response;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.util.List;
 
 import gui.demo.com.demoapplication.base.BaseActivity;
-import gui.demo.com.demoapplication.utils.HttpUtils;
 import gui.demo.com.demoapplication.utils.TextValidateUtils;
 
 public class MainActivity extends BaseActivity {
 
     public static final String TAG = "MainActivity";
-    private String exampleAPI = "http://www.geognos.com/api/en/countries/info/all.jsons";
+
+    //
+
+    private void testGPSAccessLocation() {
+        //ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+        String country_name = null;
+        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        Geocoder geocoder = new Geocoder(getApplicationContext());
+        for (String provider : lm.getAllProviders()) {
+            @SuppressWarnings("ResourceType") Location location = lm.getLastKnownLocation(provider);
+            if (location != null) {
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    if (addresses != null && addresses.size() > 0) {
+                        country_name = addresses.get(0).getCountryName();
+                        break;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Log.d(TAG, "country_name : " + country_name);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // get object drop down
-        HttpUtils httpUtils = HttpUtils.getInstance(this);
-        Response.Listener<JSONObject> resposneListener = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                if (response.length() > 0) {
-                    try {
-                        String statusMsg = (String) response.get("StatusMsg");
-                        Log.d(TAG, "statusMsg : " + statusMsg);
-
-                        JSONObject results = response.getJSONObject("Results");
-                        JSONArray countries = results.names();
-                        // Loop through the array elements
-                        for (int i = 0; i < countries.length(); i++) {
-                            // Get current json object
-                            String countryName = countries.getString(i);
-                            Log.d(TAG, "country : " + countryName);
-                            JSONObject country = results.getJSONObject(countryName);
-                            Log.d(TAG, "country : " + country.toString());
-                        }
-
-                        Log.d(TAG, "jsonObj : " + response.toString());
-                    } catch (Exception e) {
-                        // If there is an error then output this to the logs.
-                        Log.e(TAG, "Invalid JSON Object.");
-                    }
-
-                    closeDialog();
-                } else {
-                    Log.d(TAG, "No response found.");
-                }
-            }
-        };
-        showLoadingDialog();
-
-        // call api
-        httpUtils.GETObject(exampleAPI, resposneListener, getDefaultErrorListener());
+        checkApplicationPermission();
 
 
         EditText textEmail = findViewById(R.id.text_email);

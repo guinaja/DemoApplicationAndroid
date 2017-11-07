@@ -8,6 +8,7 @@
     <string name="btn_page_2">Page 2</string>
     <string name="btn_next_page">Go to next page</string>
     <string name="btn_main_page">Back to main page</string>
+    <string name="btn_call_http">Call Http</string>
 
     <string name="email_hint">Please insert your e-mail</string>
     <string name="email_invalid">invalidated email</string>

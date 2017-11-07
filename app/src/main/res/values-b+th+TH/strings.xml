@@ -8,6 +8,8 @@
     <string name="btn_page_2">หน้า 2</string>
     <string name="btn_next_page">หน้าถัดไป</string>
     <string name="btn_main_page">กลับหน้าหลัก</string>
+    <string name="btn_call_http">ทดสอบ Http</string>
+
 
     <string name="email_hint">กรุณาใส่ e-mail ของคุณ</string>
     <string name="email_invalid">อีเมลที่ไม่ถูกต้อง</string>

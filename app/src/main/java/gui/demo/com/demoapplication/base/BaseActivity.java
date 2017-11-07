@@ -1,8 +1,18 @@
 package gui.demo.com.demoapplication.base;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -25,11 +35,53 @@ public class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseActivity";
     public static ProgressDialog dialog;
+    private static double longitude;
+    private static double latitude;
+
+    private static android.location.LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+            Log.d(TAG, " Location change to : lat=" + latitude + " , lon=" + longitude);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+    private static LocationManager locationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dialog = new ProgressDialog(this);
+        if (dialog == null) {
+            dialog = new ProgressDialog(this);
+        }
+
+        if (locationManager == null) {
+            checkApplicationPermission();
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        }
+
+        if (isNetworkConnected() && isLocationEnabled()) {
+            Toast.makeText(this, "Network and Location is available", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No network or location", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -82,6 +134,7 @@ public class BaseActivity extends AppCompatActivity {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                 NetworkResponse response = error.networkResponse;
                 String res = "";
                 if (error instanceof ServerError && response != null) {
@@ -100,6 +153,63 @@ public class BaseActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), res, Toast.LENGTH_SHORT).show();
                 closeDialog();
             }
+
         };
     }
+
+
+    public static double getLongitude() {
+        return longitude;
+    }
+
+    public static double getLatitude() {
+        return latitude;
+    }
+
+
+    public void checkApplicationPermission() {
+        checkLocationPermission();
+        checkNetworkPermission();
+    }
+
+    public void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    0);
+        }
+    }
+
+    public void checkNetworkPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.INTERNET},
+                    0);
+        }
+    }
+
+
+    public Boolean isNetworkConnected() {
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return Boolean.TRUE;
+        else
+            return Boolean.FALSE;
+    }
+
+
+    public Boolean isLocationEnabled() {
+        LocationManager locationMgr = (LocationManager) getSystemService(Activity.LOCATION_SERVICE);
+        if (locationMgr.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            return Boolean.TRUE;
+        else
+            return Boolean.FALSE;
+    }
+
+
 }

@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context="gui.demo.com.demoapplication.Page1Activity">
 
+    <Button
+        android:id="@+id/btn_call_http"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:onClick="testCallHttp"
+        android:text="@string/btn_call_http"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/page_1_top_label"
+        app:layout_constraintVertical_bias="0.202" />
+
     <TextView
         android:id="@+id/page_1_top_label"
         android:layout_width="wrap_content"
