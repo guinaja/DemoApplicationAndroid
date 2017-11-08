@@ -31,38 +31,43 @@ import gui.demo.com.demoapplication.R;
  * Created by 006283 on 2/11/2560.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseActivity";
     public static ProgressDialog dialog;
     private static double longitude;
     private static double latitude;
 
-    private static android.location.LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-            Log.d(TAG, " Location change to : lat=" + latitude + " , lon=" + longitude);
-        }
+    private LocationManager locationManager;
 
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
+    public LocationListener getLocationListener() {
+        // override method for custom Location Listener
+        return new LocationListener() {
+            public void onLocationChanged(Location location) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+                Log.d(TAG, " Location change to : lat=" + latitude + " , lon=" + longitude);
+                onLocationChange(latitude, longitude);
+            }
 
-        }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
 
-        @Override
-        public void onProviderEnabled(String provider) {
+            }
 
-        }
+            @Override
+            public void onProviderEnabled(String provider) {
 
-        @Override
-        public void onProviderDisabled(String provider) {
+            }
 
-        }
-    };
+            @Override
+            public void onProviderDisabled(String provider) {
 
-    private static LocationManager locationManager;
+            }
+        };
+    }
 
+    public abstract void onLocationChange(double latitude, double longitude);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +79,7 @@ public class BaseActivity extends AppCompatActivity {
         if (locationManager == null) {
             checkApplicationPermission();
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, getLocationListener());
         }
 
         if (isNetworkConnected() && isLocationEnabled()) {

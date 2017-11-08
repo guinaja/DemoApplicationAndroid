@@ -23,7 +23,10 @@ public class MainActivity extends BaseActivity {
 
     public static final String TAG = "MainActivity";
 
-    //
+    @Override
+    public void onLocationChange(double latitude, double longitude) {
+
+    }
 
     private void testGPSAccessLocation() {
         //ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);

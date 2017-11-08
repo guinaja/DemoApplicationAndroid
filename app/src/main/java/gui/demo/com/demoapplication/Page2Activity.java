@@ -12,6 +12,10 @@ public class Page2Activity extends BaseActivity {
     public static final String TAG = "Page2Activity";
 
     @Override
+    public void onLocationChange(double latitude, double longitude) {
+
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_page2);
